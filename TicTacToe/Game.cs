@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Xml;
 
@@ -9,11 +10,12 @@ namespace TicTacToe
         public readonly string[,] pole = new string[3, 3];
         private Random _random = new Random();
 
-        public int _hrac;
+        private int _hrac;
         private string _vitez;
         public bool vyhra;
         private int _x;
         private int _y;
+
         public Game()
         {
             _hrac = _random.Next(1, 3);
@@ -24,63 +26,68 @@ namespace TicTacToe
                     pole[i, j] = "*";
                 }
             }
+
             Vypsani();
         }
+
         //X = 1   O = 2
         public void Move(int x, int y)
         {
             if (_hrac == 1)
             {
-                if (pole[x,y] != "X" && pole[x,y] != "O")
+                if (pole[x, y] != "X" && pole[x, y] != "O")
                 {
-                     pole[x,y] = "X";
-                     _hrac = 2;
-                     Vypsani();
+                    pole[x, y] = "X";
+                    _hrac = 2;
+                    Vypsani();
                 }
             }
             else
             {
-                if (pole[x,y] != "X" && pole[x,y] != "O")
+                if (pole[x, y] != "X" && pole[x, y] != "O")
                 {
-                    pole[x,y] = "O";
+                    pole[x, y] = "O";
                     _hrac = 1;
                     Vypsani();
                 }
             }
         }
 
-        public void Vypsani()
+        private void Vypsani()
         {
             Console.WriteLine("  1 2 3");
-            Console.WriteLine("1 {0} {1} {2}",pole[0,0],pole[0,1], pole[0,2]);
-            Console.WriteLine("2 {0} {1} {2}",pole[1,0],pole[1,1], pole[1,2]);
-            Console.WriteLine("3 {0} {1} {2}",pole[2,0],pole[2,1], pole[2,2]);
+            Console.WriteLine("1 {0} {1} {2}", pole[0, 0], pole[0, 1], pole[0, 2]);
+            Console.WriteLine("2 {0} {1} {2}", pole[1, 0], pole[1, 1], pole[1, 2]);
+            Console.WriteLine("3 {0} {1} {2}", pole[2, 0], pole[2, 1], pole[2, 2]);
             Vyhra();
         }
 
-        public void Vyhra()
+        private void Vyhra()
         {
             for (int i = 0; i < 3; i++)
             {
-                if (pole[i,0] != "*" && pole[i,0] == pole[i,1] && pole[i,1] == pole[i,2] )
+                if (pole[i, 0] != "*" && pole[i, 0] == pole[i, 1] && pole[i, 1] == pole[i, 2])
                 {
                     _vitez = pole[i, 0];
                     vyhra = true;
                     break;
                 }
-                if (pole[0,i] != "*" && pole[0,i] == pole[1,i] && pole[1,i] == pole[2,i] )
+
+                if (pole[0, i] != "*" && pole[0, i] == pole[1, i] && pole[1, i] == pole[2, i])
                 {
-                    _vitez = pole[0,i];
+                    _vitez = pole[0, i];
                     vyhra = true;
                     break;
                 }
-                if (pole[0,0] != "*" && pole[0,0] == pole[1,1] && pole[1,1] == pole[2,2])
+
+                if (pole[0, 0] != "*" && pole[0, 0] == pole[1, 1] && pole[1, 1] == pole[2, 2])
                 {
                     _vitez = pole[1, 1];
                     vyhra = true;
                     break;
                 }
-                if (pole[0,2] != "*" && pole[0,2] == pole[1,1] && pole[1,1] == pole[2,0])
+
+                if (pole[0, 2] != "*" && pole[0, 2] == pole[1, 1] && pole[1, 1] == pole[2, 0])
                 {
                     _vitez = pole[1, 1];
                     vyhra = true;
@@ -90,21 +97,40 @@ namespace TicTacToe
 
             if (vyhra)
             {
-                Console.WriteLine("Vyhrál hráč "+ _vitez);
+                Console.WriteLine("Vyhrál hráč " + _vitez);
             }
         }
-        public void TahneClovek()
+
+        private void TahneClovek()
         {
             var souradnice = Console.ReadLine();
 
-            _x = Convert.ToInt32(souradnice[1].ToString()) -1;
-            _y = Convert.ToInt32(souradnice[0].ToString()) -1;
+            _x = Convert.ToInt32(souradnice[1].ToString()) - 1;
+            _y = Convert.ToInt32(souradnice[0].ToString()) - 1;
 
-            Move(_x,_y);
+            Move(_x, _y);
         }
-        public void TahneAI()
+
+        private void TahneAI()
         {
-            Move(_random.Next(0,3), _random.Next(0,3));
+            Move(_random.Next(0, 3), _random.Next(0, 3));
         }
+
+        public void Run()
+        {
+            while (vyhra == false)
+            {
+                switch (_hrac)
+                {
+                    case 1:
+                        TahneClovek();
+                        break;
+                    case 2:
+                        TahneAI();
+                        break;
+                }
+            }
+        }
+
     }
 }
