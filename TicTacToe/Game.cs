@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Xml;
@@ -9,6 +13,10 @@ namespace TicTacToe
     {
         public readonly string[,] pole = new string[3, 3];
         private Random _random = new Random();
+        private HashSet<string> _index;
+        private int pos;
+        private bool _moznaRemiza = true;
+        private string _zaznam;
 
         private int _hrac;
         private string _vitez;
@@ -26,10 +34,31 @@ namespace TicTacToe
                     pole[i, j] = "*";
                 }
             }
-
             Vypsani();
         }
 
+        private void VypsaniText()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                _zaznam = _zaznam + "(";
+                for (int j = 0; j < 3; j++)
+                {
+                    _zaznam = _zaznam + pole[j, i] + " ";
+                }
+                _zaznam = _zaznam + ") ";
+            }
+
+            _zaznam = _zaznam + Environment.NewLine;
+
+            _zaznam.Replace('*', '0');
+            _zaznam.Replace('X', '1');
+            _zaznam.Replace('O', '2');
+            if (vyhra)
+            {
+                File.WriteAllText(@"C:\Users\ufon2\Disk Google\+++Programko\C#\TicTacToe\TicTacToe\hry.txt",_zaznam);
+            }
+        }
         //X = 1   O = 2
         public void Move(int x, int y)
         {
@@ -40,6 +69,7 @@ namespace TicTacToe
                     pole[x, y] = "X";
                     _hrac = 2;
                     Vypsani();
+                    VypsaniText();
                 }
             }
             else
@@ -49,6 +79,7 @@ namespace TicTacToe
                     pole[x, y] = "O";
                     _hrac = 1;
                     Vypsani();
+                    VypsaniText();
                 }
             }
         }
@@ -94,13 +125,38 @@ namespace TicTacToe
                     break;
                 }
             }
-
+            
             if (vyhra)
             {
                 Console.WriteLine("Vyhrál hráč " + _vitez);
             }
+
+            if (Contains("*")&& vyhra == false)
+            {
+                Console.WriteLine("remíza");
+                vyhra = true;
+            }
         }
 
+        private bool Contains(string value)
+        {
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (pole[i,j] == value)
+                    {
+                        _moznaRemiza = false;
+                        break;
+                    }
+
+                    _moznaRemiza = true;
+                }
+            }
+
+            return _moznaRemiza;
+        }
         private void TahneClovek()
         {
             var souradnice = Console.ReadLine();
@@ -130,6 +186,7 @@ namespace TicTacToe
                         break;
                 }
             }
+            
         }
 
     }
